@@ -4,128 +4,98 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>BizBoost AI — Marketing Toolkit for Small Businesses</title>
-  <meta name="description" content="AI-powered marketing toolkit for small businesses." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --green: #2ee89a; --green-dim: #1a7a5e; --green-glow: rgba(46,232,154,0.15);
-      --bg: #080e0b; --surface: rgba(255,255,255,0.04); --surface-hover: rgba(255,255,255,0.07);
-      --surface-active: rgba(46,232,154,0.15); --border: rgba(255,255,255,0.08);
-      --border-active: rgba(46,232,154,0.4); --ink: #f0f0ec; --ink-mid: #a0a89c; --ink-dim: #5a6358;
-      --amber: #f5c842; --amber-dim: rgba(245,200,66,0.15);
+      --green: #2ee89a; --green-dim: #1a7a5e; --green-glow: rgba(46,232,154,0.12);
+      --bg: #060e08; --surface: rgba(255,255,255,0.04); --surface-hover: rgba(255,255,255,0.07);
+      --surface-active: rgba(46,232,154,0.12); --border: rgba(255,255,255,0.08);
+      --border-active: rgba(46,232,154,0.35); --ink: #f0f0ec; --ink-mid: #a0a89c; --ink-dim: #4a5248;
+      --amber: #f5c842; --amber-dim: rgba(245,200,66,0.12);
       --radius: 14px; --radius-sm: 9px;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
     body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--ink); min-height: 100vh; font-size: 15px; line-height: 1.6; overflow-x: hidden; }
 
-    /* ── BACKDROP ── */
     .backdrop { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
     .backdrop canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
-    .backdrop-noise {
-      position: absolute; inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-      opacity: 0.5; mix-blend-mode: overlay;
-    }
+    .backdrop-noise { position: absolute; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"); opacity: 0.5; mix-blend-mode: overlay; }
 
-    /* ── NAV ── */
-    nav {
-      position: sticky; top: 0; z-index: 100; height: 58px;
-      display: flex; align-items: center; justify-content: space-between; padding: 0 2rem;
-      background: rgba(8,14,11,0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--border);
-    }
-    .nav-logo { font-family: 'Lora', serif; font-size: 19px; font-weight: 600; color: var(--ink); text-decoration: none; letter-spacing: -0.3px; }
+    nav { position: sticky; top: 0; z-index: 100; height: 58px; display: flex; align-items: center; justify-content: space-between; padding: 0 2rem; background: rgba(6,14,8,0.75); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
+    .nav-logo { font-family: 'Lora', serif; font-size: 19px; font-weight: 600; color: var(--ink); text-decoration: none; }
     .nav-logo span { color: var(--green); }
+    .nav-right { display: flex; align-items: center; gap: 10px; }
     .nav-pill { font-size: 11px; padding: 4px 11px; border-radius: 20px; font-weight: 500; background: var(--surface); color: var(--ink-mid); border: 1px solid var(--border); }
-    .nav-pill.pro { background: var(--amber-dim); color: var(--amber); border-color: rgba(245,200,66,0.3); }
+    .nav-pill.pro { background: var(--amber-dim); color: var(--amber); border-color: rgba(245,200,66,0.25); }
+    .nav-user { font-size: 12px; color: var(--ink-mid); }
+    .nav-btn { font-size: 12px; background: none; border: 1px solid var(--border); color: var(--ink-mid); border-radius: 6px; padding: 5px 12px; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
+    .nav-btn:hover { border-color: var(--border-active); color: var(--green); }
+    .nav-btn.primary { background: var(--green); color: #060e08; border-color: var(--green); font-weight: 500; }
+    .nav-btn.primary:hover { background: #4dffa8; }
 
-    /* ── HERO ── */
     .hero { position: relative; z-index: 1; text-align: center; padding: 4.5rem 1.5rem 3rem; max-width: 620px; margin: 0 auto; }
     .hero-tag { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--green); font-weight: 500; margin-bottom: 1rem; border: 1px solid var(--border-active); padding: 4px 12px; border-radius: 20px; background: var(--green-glow); }
-    .hero-tag::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--green); display: block; box-shadow: 0 0 8px var(--green); animation: pulse 2s ease-in-out infinite; }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-    .hero h1 { font-family: 'Lora', serif; font-size: clamp(1.9rem, 4.5vw, 2.8rem); font-weight: 600; line-height: 1.18; margin-bottom: 1rem; color: var(--ink); }
+    .hero-tag::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); animation: pulse 2s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    .hero h1 { font-family: 'Lora', serif; font-size: clamp(1.9rem, 4.5vw, 2.8rem); font-weight: 600; line-height: 1.18; margin-bottom: 1rem; }
     .hero h1 em { font-style: italic; color: var(--green); }
     .hero p { font-size: 15px; color: var(--ink-mid); font-weight: 300; max-width: 440px; margin: 0 auto; }
 
-    /* ── APP LAYOUT ── */
     .app { position: relative; z-index: 1; max-width: 1060px; margin: 0 auto; padding: 2rem 1.5rem 5rem; display: grid; grid-template-columns: 220px 1fr; gap: 1.25rem; align-items: start; }
     @media (max-width: 720px) { .app { grid-template-columns: 1fr; } .sidebar { position: static !important; } }
 
-    /* ── SIDEBAR ── */
-    .sidebar { position: sticky; top: 74px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 0.75rem 0.5rem; overflow: hidden; }
+    .sidebar { position: sticky; top: 74px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 0.75rem 0.5rem; }
     .sidebar-label { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-dim); padding: 6px 10px 4px; }
-    .tool-btn {
-      width: 100%; text-align: left; padding: 9px 10px; border-radius: var(--radius-sm);
-      border: none; background: transparent; cursor: pointer;
-      font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--ink-mid);
-      display: flex; align-items: center; gap: 9px; transition: all 0.15s;
-    }
+    .tool-btn { width: 100%; text-align: left; padding: 9px 10px; border-radius: var(--radius-sm); border: 1px solid transparent; background: transparent; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--ink-mid); display: flex; align-items: center; gap: 9px; transition: all 0.15s; }
     .tool-btn:hover { background: var(--surface-hover); color: var(--ink); }
-    .tool-btn.active { background: var(--surface-active); color: var(--green); border: 1px solid var(--border-active); }
-    .tool-icon { width: 16px; height: 16px; flex-shrink: 0; opacity: 0.6; }
-    .tool-btn.active .tool-icon { opacity: 1; }
-    .tool-btn.active .tool-icon path, .tool-btn.active .tool-icon rect, .tool-btn.active .tool-icon circle, .tool-btn.active .tool-icon polyline, .tool-btn.active .tool-icon line, .tool-btn.active .tool-icon polygon { stroke: var(--green); }
+    .tool-btn.active { background: var(--surface-active); color: var(--green); border-color: var(--border-active); }
+    .tool-icon { width: 15px; height: 15px; flex-shrink: 0; opacity: 0.5; }
+    .tool-btn.active .tool-icon { opacity: 1; color: var(--green); }
     .pro-badge { font-size: 9px; background: var(--amber-dim); color: var(--amber); padding: 2px 6px; border-radius: 8px; font-weight: 500; margin-left: auto; border: 1px solid rgba(245,200,66,0.2); flex-shrink: 0; }
-    .tool-btn.active .pro-badge { background: rgba(46,232,154,0.15); color: var(--green); border-color: var(--border-active); }
+    .tool-btn.active .pro-badge { background: var(--green-glow); color: var(--green); border-color: var(--border-active); }
     .sidebar-divider { height: 1px; background: var(--border); margin: 6px 4px; }
 
-    /* ── BIZ BAR ── */
     .biz-bar { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.9rem 1.1rem; margin-bottom: 1.25rem; }
     .biz-bar-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; }
     .biz-bar-label { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-dim); }
-    .biz-bar-edit { font-size: 12px; color: var(--green); cursor: pointer; background: none; border: none; font-family: 'DM Sans', sans-serif; opacity: 0.8; }
-    .biz-bar-edit:hover { opacity: 1; }
+    .biz-bar-edit { font-size: 12px; color: var(--green); cursor: pointer; background: none; border: none; font-family: 'DM Sans', sans-serif; }
     .biz-bar-grid { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 13px; color: var(--ink-mid); }
     .biz-bar-item strong { color: var(--ink); font-weight: 500; }
     .biz-bar-empty { font-size: 13px; color: var(--ink-dim); font-style: italic; }
 
-    /* ── PANEL ── */
     .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.75rem; }
     .panel-header { margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
     .panel-title { font-family: 'Lora', serif; font-size: 19px; font-weight: 600; color: var(--ink); margin-bottom: 3px; }
     .panel-desc { font-size: 13px; color: var(--ink-mid); }
 
-    /* ── PRO GATE ── */
-    .pro-gate { background: var(--amber-dim); border: 1px solid rgba(245,200,66,0.25); border-radius: var(--radius-sm); padding: 0.9rem 1.1rem; margin-bottom: 1.5rem; display: none; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+    .pro-gate { background: var(--amber-dim); border: 1px solid rgba(245,200,66,0.2); border-radius: var(--radius-sm); padding: 0.9rem 1.1rem; margin-bottom: 1.5rem; display: none; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
     .pro-gate.visible { display: flex; }
     .pro-gate-text { font-size: 13px; color: var(--amber); }
 
-    /* ── FORM ── */
     .field { margin-bottom: 1rem; }
     .field label { display: block; font-size: 12px; font-weight: 500; color: var(--ink-mid); margin-bottom: 5px; letter-spacing: 0.02em; }
-    .field input, .field textarea, .field select {
-      width: 100%; padding: 10px 13px;
-      border: 1px solid var(--border); border-radius: var(--radius-sm);
-      font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--ink);
-      background: rgba(0,0,0,0.3); transition: border-color 0.15s, background 0.15s; outline: none;
-    }
-    .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--border-active); background: rgba(0,0,0,0.4); }
+    .field input, .field textarea, .field select { width: 100%; padding: 10px 13px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--ink); background: rgba(0,0,0,0.3); transition: border-color 0.15s; outline: none; }
+    .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--border-active); }
     .field input::placeholder, .field textarea::placeholder { color: var(--ink-dim); }
     .field textarea { resize: vertical; min-height: 80px; }
-    .field select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%235a6358' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; background-color: rgba(0,0,0,0.3); }
-    .field select option { background: #111; color: var(--ink); }
+    .field select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%234a5248' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; background-color: rgba(0,0,0,0.3); }
+    .field select option { background: #0f1a13; color: var(--ink); }
     .row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
     @media (max-width: 480px) { .row { grid-template-columns: 1fr; } }
 
-    /* ── BUTTONS ── */
-    .gen-btn { width: 100%; padding: 12px; background: var(--green); color: #060e09; border: none; border-radius: var(--radius-sm); font-size: 14px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.15s; margin-top: 0.25rem; letter-spacing: 0.01em; }
-    .gen-btn:hover { background: #4dffa8; box-shadow: 0 0 24px rgba(46,232,154,0.3); }
-    .gen-btn:active { transform: scale(0.99); }
+    .gen-btn { width: 100%; padding: 12px; background: var(--green); color: #060e08; border: none; border-radius: var(--radius-sm); font-size: 14px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.15s; margin-top: 0.25rem; }
+    .gen-btn:hover { background: #4dffa8; box-shadow: 0 0 20px rgba(46,232,154,0.25); }
     .gen-btn:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
     .upgrade-btn { font-size: 12px; background: var(--amber); color: #1a1000; border: none; border-radius: 6px; padding: 8px 14px; cursor: pointer; font-family: 'DM Sans', sans-serif; font-weight: 500; white-space: nowrap; transition: all 0.15s; }
     .upgrade-btn:hover { background: #ffd54f; }
 
-    /* ── MESSAGES ── */
-    .error-msg { background: rgba(220,38,38,0.1); color: #fca5a5; font-size: 13px; padding: 10px 14px; border-radius: var(--radius-sm); margin-bottom: 1rem; display: none; border: 1px solid rgba(220,38,38,0.2); }
+    .error-msg { background: rgba(220,38,38,0.08); color: #fca5a5; font-size: 13px; padding: 10px 14px; border-radius: var(--radius-sm); margin-bottom: 1rem; display: none; border: 1px solid rgba(220,38,38,0.2); }
     .success-msg { background: var(--green-glow); color: var(--green); font-size: 13px; padding: 10px 14px; border-radius: var(--radius-sm); margin-bottom: 1rem; display: none; border: 1px solid var(--border-active); }
 
-    /* ── OUTPUT ── */
     .output-area { margin-top: 1.5rem; display: none; }
     .output-area.visible { display: block; }
-    .output-card { background: rgba(0,0,0,0.25); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 1.1rem 1.25rem; }
+    .output-card { background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 1.1rem 1.25rem; }
     .output-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
     .output-card-label { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; color: var(--green); }
     .copy-btn { font-size: 11px; color: var(--ink-mid); background: var(--surface); border: 1px solid var(--border); border-radius: 5px; padding: 3px 10px; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
@@ -135,38 +105,56 @@
     .loading-text::after { content: ''; animation: dots 1.2s steps(3,end) infinite; }
     @keyframes dots { 0%,20%{content:'.'} 40%,60%{content:'..'} 80%,100%{content:'...'} }
 
-    /* ── UPGRADE BANNER ── */
     .upgrade-banner { background: var(--green-glow); border: 1px solid var(--border-active); border-radius: var(--radius); padding: 1.1rem 1.5rem; display: none; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 1rem; flex-wrap: wrap; }
     .upgrade-banner.visible { display: flex; }
     .upgrade-banner-text { font-size: 13px; color: var(--green); }
-    .upgrade-banner-btn { font-size: 12px; background: var(--green); color: #060e09; border: none; border-radius: 6px; padding: 9px 18px; cursor: pointer; font-family: 'DM Sans', sans-serif; font-weight: 500; white-space: nowrap; transition: all 0.15s; }
+    .upgrade-banner-btn { font-size: 12px; background: var(--green); color: #060e08; border: none; border-radius: 6px; padding: 9px 18px; cursor: pointer; font-family: 'DM Sans', sans-serif; font-weight: 500; transition: all 0.15s; }
     .upgrade-banner-btn:hover { background: #4dffa8; }
 
-    /* ── MODAL ── */
-    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); z-index: 200; display: none; align-items: center; justify-content: center; padding: 1rem; }
+    /* MODALS */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(10px); z-index: 200; display: none; align-items: center; justify-content: center; padding: 1rem; }
     .modal-overlay.visible { display: flex; }
-    .modal { background: #0f1a13; border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; max-width: 460px; width: 100%; }
+    .modal { background: #0c1810; border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; max-width: 440px; width: 100%; }
     .modal-title { font-family: 'Lora', serif; font-size: 20px; font-weight: 600; margin-bottom: 4px; color: var(--ink); }
     .modal-desc { font-size: 13px; color: var(--ink-mid); margin-bottom: 1.5rem; }
-    .modal-btn { width: 100%; padding: 12px; background: var(--green); color: #060e09; border: none; border-radius: var(--radius-sm); font-size: 14px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; margin-top: 0.5rem; transition: all 0.15s; }
-    .modal-btn:hover { background: #4dffa8; box-shadow: 0 0 24px rgba(46,232,154,0.25); }
+    .modal-btn { width: 100%; padding: 12px; background: var(--green); color: #060e08; border: none; border-radius: var(--radius-sm); font-size: 14px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; margin-top: 0.5rem; transition: all 0.15s; }
+    .modal-btn:hover { background: #4dffa8; }
+    .modal-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .modal-switch { text-align: center; margin-top: 1rem; font-size: 13px; color: var(--ink-mid); }
+    .modal-switch a { color: var(--green); cursor: pointer; text-decoration: none; }
+    .modal-error { background: rgba(220,38,38,0.08); color: #fca5a5; font-size: 13px; padding: 8px 12px; border-radius: var(--radius-sm); margin-bottom: 1rem; display: none; border: 1px solid rgba(220,38,38,0.2); }
+    .modal-divider { height: 1px; background: var(--border); margin: 1.25rem 0; }
 
     footer { position: relative; z-index: 1; text-align: center; padding: 2rem; font-size: 12px; color: var(--ink-dim); border-top: 1px solid var(--border); }
   </style>
 </head>
 <body>
 
-<!-- BACKDROP -->
 <div class="backdrop">
   <canvas id="bg-canvas"></canvas>
   <div class="backdrop-noise"></div>
 </div>
 
-<!-- SETUP MODAL -->
-<div class="modal-overlay" id="setup-modal">
+<!-- AUTH MODAL -->
+<div class="modal-overlay" id="auth-modal">
   <div class="modal">
-    <div class="modal-title">Welcome to BizBoost AI</div>
-    <div class="modal-desc">Enter your business info once — we'll use it across every tool.</div>
+    <div class="modal-title" id="auth-title">Sign in to BizBoost</div>
+    <div class="modal-desc" id="auth-desc">Access your account and saved settings.</div>
+    <div class="modal-error" id="auth-error"></div>
+    <div class="field"><label>Email</label><input type="email" id="auth-email" placeholder="you@example.com" /></div>
+    <div class="field"><label>Password</label><input type="password" id="auth-password" placeholder="••••••••" /></div>
+    <button class="modal-btn" id="auth-submit" onclick="submitAuth()">Sign in</button>
+    <div class="modal-switch" id="auth-switch">Don't have an account? <a onclick="toggleAuthMode()">Sign up free</a></div>
+    <div class="modal-divider"></div>
+    <div style="text-align:center;"><button onclick="closeAuthModal()" style="font-size:12px;color:var(--ink-dim);background:none;border:none;cursor:pointer;font-family:inherit;">Continue without account</button></div>
+  </div>
+</div>
+
+<!-- BIZ INFO MODAL -->
+<div class="modal-overlay" id="biz-modal">
+  <div class="modal">
+    <div class="modal-title">Your business info</div>
+    <div class="modal-desc">Saved and used across every tool automatically.</div>
     <div class="field"><label>Business name *</label><input type="text" id="setup-name" placeholder="e.g. Sunny Bites Cafe" /></div>
     <div class="field"><label>Industry / type *</label><input type="text" id="setup-type" placeholder="e.g. Coffee shop, Florist, Plumber" /></div>
     <div class="row">
@@ -174,13 +162,16 @@
       <div class="field"><label>Target customer</label><input type="text" id="setup-customer" placeholder="e.g. Young professionals" /></div>
     </div>
     <div class="field"><label>What makes you special?</label><textarea id="setup-desc" placeholder="e.g. Family-owned, organic, 20 years experience..."></textarea></div>
-    <button class="modal-btn" onclick="saveBizInfo()">Save & Get Started</button>
+    <button class="modal-btn" onclick="saveBizInfo()">Save</button>
   </div>
 </div>
 
 <nav>
   <a class="nav-logo" href="#">Biz<span>Boost</span> AI</a>
-  <span class="nav-pill" id="nav-pill">Free plan</span>
+  <div class="nav-right" id="nav-right">
+    <button class="nav-btn" onclick="openAuth('login')">Sign in</button>
+    <button class="nav-btn primary" onclick="openAuth('signup')">Sign up free</button>
+  </div>
 </nav>
 
 <section class="hero">
@@ -190,74 +181,54 @@
 </section>
 
 <div class="app">
-  <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="sidebar-label">Core</div>
-
     <button class="tool-btn active" onclick="switchTool('listings')" id="btn-listings">
       <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
       Business listings
     </button>
-
     <button class="tool-btn" onclick="switchTool('social')" id="btn-social">
       <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
       Social captions
     </button>
-
     <button class="tool-btn" onclick="switchTool('email')" id="btn-email">
       <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
       Promo email
     </button>
-
     <div class="sidebar-divider"></div>
     <div class="sidebar-label">Pro Tools</div>
-
     <button class="tool-btn" onclick="switchTool('calendar')" id="btn-calendar">
-      <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
       Social calendar <span class="pro-badge">PRO</span>
     </button>
-
     <button class="tool-btn" onclick="switchTool('ads')" id="btn-ads">
       <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
       Ad copy <span class="pro-badge">PRO</span>
     </button>
-
     <button class="tool-btn" onclick="switchTool('products')" id="btn-products">
       <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
       Product descriptions <span class="pro-badge">PRO</span>
     </button>
-
     <button class="tool-btn" onclick="switchTool('reviews')" id="btn-reviews">
       <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
       Review responses <span class="pro-badge">PRO</span>
     </button>
-
     <button class="tool-btn" onclick="switchTool('faq')" id="btn-faq">
       <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
       SEO FAQ generator <span class="pro-badge">PRO</span>
     </button>
-
     <div class="sidebar-divider"></div>
-    <button class="tool-btn" onclick="openSetup()">
+    <button class="tool-btn" onclick="openBizModal()">
       <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-      Edit business info
+      Business info
     </button>
   </aside>
 
-  <!-- MAIN -->
   <main>
     <div class="error-msg" id="error-msg"></div>
     <div class="success-msg" id="success-msg"></div>
+    <div class="biz-bar"><div class="biz-bar-header"><span class="biz-bar-label">Your business</span><button class="biz-bar-edit" onclick="openBizModal()">Edit</button></div><div id="biz-bar-content"></div></div>
 
-    <div class="biz-bar" id="biz-bar">
-      <div class="biz-bar-header">
-        <span class="biz-bar-label">Your business</span>
-        <button class="biz-bar-edit" onclick="openSetup()">Edit</button>
-      </div>
-      <div id="biz-bar-content"></div>
-    </div>
-
-    <!-- LISTINGS -->
     <div class="panel" id="panel-listings">
       <div class="panel-header"><div class="panel-title">Business listings</div><div class="panel-desc">Google Business, Yelp, and directory descriptions</div></div>
       <div class="field"><label>Platform</label><select id="listing-platform"><option>Google Business</option><option>Yelp</option><option>TripAdvisor</option><option>Facebook</option><option>General directory</option></select></div>
@@ -266,304 +237,291 @@
       <div class="output-area" id="out-listings"><div class="output-card"><div class="output-card-header"><span class="output-card-label">Listing description</span><button class="copy-btn" onclick="copyOut('listings-text')">Copy</button></div><div class="output-text" id="listings-text"></div></div></div>
     </div>
 
-    <!-- SOCIAL -->
     <div class="panel" id="panel-social" style="display:none;">
-      <div class="panel-header"><div class="panel-title">Social media captions</div><div class="panel-desc">Ready-to-post captions for Instagram, Facebook, TikTok</div></div>
-      <div class="row">
-        <div class="field"><label>Platform</label><select id="social-platform"><option>Instagram</option><option>Facebook</option><option>TikTok</option><option>LinkedIn</option><option>All platforms</option></select></div>
-        <div class="field"><label>Number of captions</label><select id="social-count"><option>3</option><option>5</option></select></div>
-      </div>
-      <div class="field"><label>Theme / promotion (optional)</label><input type="text" id="social-theme" placeholder="e.g. Summer sale, New menu item, Grand opening" /></div>
+      <div class="panel-header"><div class="panel-title">Social media captions</div><div class="panel-desc">Ready-to-post captions for any platform</div></div>
+      <div class="row"><div class="field"><label>Platform</label><select id="social-platform"><option>Instagram</option><option>Facebook</option><option>TikTok</option><option>LinkedIn</option></select></div><div class="field"><label>Number of captions</label><select id="social-count"><option>3</option><option>5</option></select></div></div>
+      <div class="field"><label>Theme / promotion (optional)</label><input type="text" id="social-theme" placeholder="e.g. Summer sale, New menu item" /></div>
       <button class="gen-btn" id="gen-social" onclick="generate('social')">Generate captions</button>
       <div class="output-area" id="out-social"><div class="output-card"><div class="output-card-header"><span class="output-card-label">Captions</span><button class="copy-btn" onclick="copyOut('social-text')">Copy</button></div><div class="output-text" id="social-text"></div></div></div>
     </div>
 
-    <!-- EMAIL -->
     <div class="panel" id="panel-email" style="display:none;">
       <div class="panel-header"><div class="panel-title">Promotional email</div><div class="panel-desc">Compelling emails to send to your customer list</div></div>
-      <div class="row">
-        <div class="field"><label>Email goal</label><select id="email-goal"><option>Promote a sale</option><option>Announce new product</option><option>Re-engage customers</option><option>Seasonal promotion</option><option>Event announcement</option></select></div>
-        <div class="field"><label>Tone</label><select id="email-tone"><option>Friendly</option><option>Professional</option><option>Urgent</option><option>Celebratory</option></select></div>
-      </div>
-      <div class="field"><label>Specific offer or details (optional)</label><input type="text" id="email-offer" placeholder="e.g. 20% off this weekend, Free dessert with entrée" /></div>
+      <div class="row"><div class="field"><label>Email goal</label><select id="email-goal"><option>Promote a sale</option><option>Announce new product</option><option>Re-engage customers</option><option>Seasonal promotion</option><option>Event announcement</option></select></div><div class="field"><label>Tone</label><select id="email-tone"><option>Friendly</option><option>Professional</option><option>Urgent</option><option>Celebratory</option></select></div></div>
+      <div class="field"><label>Specific offer (optional)</label><input type="text" id="email-offer" placeholder="e.g. 20% off this weekend" /></div>
       <button class="gen-btn" id="gen-email" onclick="generate('email')">Generate email</button>
       <div class="output-area" id="out-email"><div class="output-card"><div class="output-card-header"><span class="output-card-label">Promotional email</span><button class="copy-btn" onclick="copyOut('email-text')">Copy</button></div><div class="output-text" id="email-text"></div></div></div>
     </div>
 
-    <!-- CALENDAR PRO -->
     <div class="panel" id="panel-calendar" style="display:none;">
       <div class="panel-header"><div class="panel-title">Weekly social media calendar</div><div class="panel-desc">7 days of ready-to-post content, all at once</div></div>
       <div class="pro-gate" id="gate-calendar"><div class="pro-gate-text"><strong>Pro feature.</strong> Upgrade for unlimited access.</div><button class="upgrade-btn" onclick="startCheckout()">Upgrade — $4.99/mo</button></div>
-      <div id="calendar-form">
-        <div class="row">
-          <div class="field"><label>Platform focus</label><select id="cal-platform"><option>Instagram</option><option>Facebook</option><option>TikTok</option><option>LinkedIn</option><option>Mixed</option></select></div>
-          <div class="field"><label>Content theme</label><select id="cal-theme"><option>General brand awareness</option><option>Promotion / sale</option><option>Behind the scenes</option><option>Community focused</option><option>Educational / tips</option></select></div>
-        </div>
-        <div class="field"><label>Upcoming events or promos? (optional)</label><input type="text" id="cal-events" placeholder="e.g. Summer sale starts Friday, New menu launch" /></div>
-        <button class="gen-btn" id="gen-calendar" onclick="generate('calendar')">Generate 7-day calendar</button>
-      </div>
+      <div id="calendar-form"><div class="row"><div class="field"><label>Platform</label><select id="cal-platform"><option>Instagram</option><option>Facebook</option><option>TikTok</option><option>LinkedIn</option><option>Mixed</option></select></div><div class="field"><label>Content theme</label><select id="cal-theme"><option>Brand awareness</option><option>Promotion / sale</option><option>Behind the scenes</option><option>Community</option><option>Educational</option></select></div></div><div class="field"><label>Upcoming events? (optional)</label><input type="text" id="cal-events" placeholder="e.g. Summer sale starts Friday" /></div><button class="gen-btn" id="gen-calendar" onclick="generate('calendar')">Generate 7-day calendar</button></div>
       <div class="output-area" id="out-calendar"><div class="output-card"><div class="output-card-header"><span class="output-card-label">7-day content calendar</span><button class="copy-btn" onclick="copyOut('calendar-text')">Copy all</button></div><div class="output-text" id="calendar-text"></div></div></div>
     </div>
 
-    <!-- ADS PRO -->
     <div class="panel" id="panel-ads" style="display:none;">
-      <div class="panel-header"><div class="panel-title">Ad copy generator</div><div class="panel-desc">High-converting copy for Google, Facebook, and Instagram ads</div></div>
+      <div class="panel-header"><div class="panel-title">Ad copy generator</div><div class="panel-desc">High-converting Google, Facebook, and Instagram ads</div></div>
       <div class="pro-gate" id="gate-ads"><div class="pro-gate-text"><strong>Pro feature.</strong> Upgrade for unlimited access.</div><button class="upgrade-btn" onclick="startCheckout()">Upgrade — $4.99/mo</button></div>
-      <div id="ads-form">
-        <div class="row">
-          <div class="field"><label>Ad platform</label><select id="ad-platform"><option>Google Ads</option><option>Facebook / Instagram</option><option>Both</option></select></div>
-          <div class="field"><label>Campaign goal</label><select id="ad-goal"><option>Drive foot traffic</option><option>Website visits</option><option>Generate calls</option><option>Promote a sale</option><option>Build awareness</option></select></div>
-        </div>
-        <div class="field"><label>Offer or key message</label><input type="text" id="ad-offer" placeholder="e.g. 30% off this weekend only, Free consultation" /></div>
-        <div class="field"><label>Budget positioning</label><select id="ad-budget"><option>Value / affordable</option><option>Premium / luxury</option><option>Mid-range</option></select></div>
-        <button class="gen-btn" id="gen-ads" onclick="generate('ads')">Generate ad copy</button>
-      </div>
+      <div id="ads-form"><div class="row"><div class="field"><label>Platform</label><select id="ad-platform"><option>Google Ads</option><option>Facebook / Instagram</option><option>Both</option></select></div><div class="field"><label>Goal</label><select id="ad-goal"><option>Drive foot traffic</option><option>Website visits</option><option>Generate calls</option><option>Promote a sale</option><option>Build awareness</option></select></div></div><div class="field"><label>Offer or key message</label><input type="text" id="ad-offer" placeholder="e.g. 30% off this weekend" /></div><div class="field"><label>Positioning</label><select id="ad-budget"><option>Value / affordable</option><option>Premium / luxury</option><option>Mid-range</option></select></div><button class="gen-btn" id="gen-ads" onclick="generate('ads')">Generate ad copy</button></div>
       <div class="output-area" id="out-ads"><div class="output-card"><div class="output-card-header"><span class="output-card-label">Ad copy</span><button class="copy-btn" onclick="copyOut('ads-text')">Copy</button></div><div class="output-text" id="ads-text"></div></div></div>
     </div>
 
-    <!-- PRODUCTS PRO -->
     <div class="panel" id="panel-products" style="display:none;">
-      <div class="panel-header"><div class="panel-title">Product & menu descriptions</div><div class="panel-desc">Enticing descriptions that sell your products or menu items</div></div>
+      <div class="panel-header"><div class="panel-title">Product & menu descriptions</div><div class="panel-desc">Enticing descriptions that sell</div></div>
       <div class="pro-gate" id="gate-products"><div class="pro-gate-text"><strong>Pro feature.</strong> Upgrade for unlimited access.</div><button class="upgrade-btn" onclick="startCheckout()">Upgrade — $4.99/mo</button></div>
-      <div id="products-form">
-        <div class="field"><label>Product or menu item name *</label><input type="text" id="product-name" placeholder="e.g. Signature Latte, Deluxe Haircut, Weekend Brunch Package" /></div>
-        <div class="field"><label>Key details (ingredients, features, benefits)</label><textarea id="product-details" placeholder="e.g. Oat milk, vanilla, espresso, topped with cinnamon."></textarea></div>
-        <div class="row">
-          <div class="field"><label>Price (optional)</label><input type="text" id="product-price" placeholder="e.g. $14.99" /></div>
-          <div class="field"><label>Number of items</label><select id="product-count"><option>1</option><option>3</option><option>5</option></select></div>
-        </div>
-        <button class="gen-btn" id="gen-products" onclick="generate('products')">Generate descriptions</button>
-      </div>
+      <div id="products-form"><div class="field"><label>Product or menu item *</label><input type="text" id="product-name" placeholder="e.g. Signature Latte, Deluxe Haircut" /></div><div class="field"><label>Key details</label><textarea id="product-details" placeholder="e.g. Oat milk, vanilla, espresso, cinnamon"></textarea></div><div class="row"><div class="field"><label>Price (optional)</label><input type="text" id="product-price" placeholder="e.g. $14.99" /></div><div class="field"><label>Number of items</label><select id="product-count"><option>1</option><option>3</option><option>5</option></select></div></div><button class="gen-btn" id="gen-products" onclick="generate('products')">Generate descriptions</button></div>
       <div class="output-area" id="out-products"><div class="output-card"><div class="output-card-header"><span class="output-card-label">Product descriptions</span><button class="copy-btn" onclick="copyOut('products-text')">Copy</button></div><div class="output-text" id="products-text"></div></div></div>
     </div>
 
-    <!-- REVIEWS PRO -->
     <div class="panel" id="panel-reviews" style="display:none;">
-      <div class="panel-header"><div class="panel-title">Review response templates</div><div class="panel-desc">Professional responses to Google, Yelp, and TripAdvisor reviews</div></div>
+      <div class="panel-header"><div class="panel-title">Review response templates</div><div class="panel-desc">Professional responses to customer reviews</div></div>
       <div class="pro-gate" id="gate-reviews"><div class="pro-gate-text"><strong>Pro feature.</strong> Upgrade for unlimited access.</div><button class="upgrade-btn" onclick="startCheckout()">Upgrade — $4.99/mo</button></div>
-      <div id="reviews-form">
-        <div class="field"><label>Paste the customer review *</label><textarea id="review-text" placeholder="Paste the review you want to respond to here..." style="min-height:100px;"></textarea></div>
-        <div class="row">
-          <div class="field"><label>Review rating</label><select id="review-rating"><option>5 stars</option><option>4 stars</option><option>3 stars</option><option>2 stars</option><option>1 star</option></select></div>
-          <div class="field"><label>Response tone</label><select id="review-tone"><option>Warm & grateful</option><option>Professional</option><option>Apologetic & empathetic</option><option>Friendly & casual</option></select></div>
-        </div>
-        <button class="gen-btn" id="gen-reviews" onclick="generate('reviews')">Generate response</button>
-      </div>
+      <div id="reviews-form"><div class="field"><label>Paste the customer review *</label><textarea id="review-text" placeholder="Paste the review here..." style="min-height:100px;"></textarea></div><div class="row"><div class="field"><label>Rating</label><select id="review-rating"><option>5 stars</option><option>4 stars</option><option>3 stars</option><option>2 stars</option><option>1 star</option></select></div><div class="field"><label>Response tone</label><select id="review-tone"><option>Warm & grateful</option><option>Professional</option><option>Apologetic & empathetic</option><option>Friendly & casual</option></select></div></div><button class="gen-btn" id="gen-reviews" onclick="generate('reviews')">Generate response</button></div>
       <div class="output-area" id="out-reviews"><div class="output-card"><div class="output-card-header"><span class="output-card-label">Review response</span><button class="copy-btn" onclick="copyOut('reviews-text')">Copy</button></div><div class="output-text" id="reviews-text"></div></div></div>
     </div>
 
-    <!-- FAQ PRO -->
     <div class="panel" id="panel-faq" style="display:none;">
       <div class="panel-header"><div class="panel-title">Local SEO FAQ generator</div><div class="panel-desc">Google-optimized FAQs that help customers find you</div></div>
       <div class="pro-gate" id="gate-faq"><div class="pro-gate-text"><strong>Pro feature.</strong> Upgrade for unlimited access.</div><button class="upgrade-btn" onclick="startCheckout()">Upgrade — $4.99/mo</button></div>
-      <div id="faq-form">
-        <div class="row">
-          <div class="field"><label>Number of FAQs</label><select id="faq-count"><option>5</option><option>8</option><option>10</option></select></div>
-          <div class="field"><label>Focus area</label><select id="faq-focus"><option>General business info</option><option>Services & pricing</option><option>Location & hours</option><option>Products</option><option>Policies</option></select></div>
-        </div>
-        <div class="field"><label>Specific questions to include? (optional)</label><input type="text" id="faq-custom" placeholder="e.g. Do you offer delivery? Are you pet friendly?" /></div>
-        <button class="gen-btn" id="gen-faq" onclick="generate('faq')">Generate FAQs</button>
-      </div>
+      <div id="faq-form"><div class="row"><div class="field"><label>Number of FAQs</label><select id="faq-count"><option>5</option><option>8</option><option>10</option></select></div><div class="field"><label>Focus area</label><select id="faq-focus"><option>General business info</option><option>Services & pricing</option><option>Location & hours</option><option>Products</option><option>Policies</option></select></div></div><div class="field"><label>Specific questions to include? (optional)</label><input type="text" id="faq-custom" placeholder="e.g. Do you offer delivery?" /></div><button class="gen-btn" id="gen-faq" onclick="generate('faq')">Generate FAQs</button></div>
       <div class="output-area" id="out-faq"><div class="output-card"><div class="output-card-header"><span class="output-card-label">SEO FAQs</span><button class="copy-btn" onclick="copyOut('faq-text')">Copy</button></div><div class="output-text" id="faq-text"></div></div></div>
     </div>
 
     <div class="upgrade-banner" id="upgrade-banner">
-      <div class="upgrade-banner-text"><strong>You've used your 3 free generations today.</strong> Upgrade to Pro for unlimited access to all tools.</div>
+      <div class="upgrade-banner-text"><strong>You've used your 3 free generations today.</strong> Upgrade to Pro for unlimited access.</div>
       <button class="upgrade-banner-btn" onclick="startCheckout()">Upgrade — $4.99/mo</button>
     </div>
   </main>
 </div>
 
-<footer>© 2026 BizBoost AI · Built for small business owners · Powered by Claude</footer>
+<footer>© 2026 BizBoost AI · Powered by Claude</footer>
 
 <script>
-// ── CANVAS BACKDROP ──
-(function() {
-  const canvas = document.getElementById('bg-canvas');
-  const ctx = canvas.getContext('2d');
-  let W, H, t = 0;
-  const orbs = [
-    { x: 0.15, y: 0.2, r: 0.45, color: [28, 120, 80], speed: 0.0004 },
-    { x: 0.8,  y: 0.5, r: 0.35, color: [20, 90, 55],  speed: 0.0003 },
-    { x: 0.5,  y: 0.85,r: 0.3,  color: [10, 60, 40],  speed: 0.0005 },
-  ];
-  function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
-  function draw() {
-    t += 1;
-    ctx.clearRect(0,0,W,H);
-    ctx.fillStyle = '#060e08';
-    ctx.fillRect(0,0,W,H);
-    orbs.forEach((o,i) => {
-      const dx = Math.sin(t * o.speed + i * 2.1) * 0.08;
-      const dy = Math.cos(t * o.speed * 0.7 + i * 1.3) * 0.06;
-      const cx = (o.x + dx) * W;
-      const cy = (o.y + dy) * H;
-      const radius = o.r * Math.min(W, H);
-      const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
-      const [r,gr,b] = o.color;
-      g.addColorStop(0,   `rgba(${r},${gr},${b},0.55)`);
-      g.addColorStop(0.4, `rgba(${r},${gr},${b},0.18)`);
-      g.addColorStop(1,   `rgba(${r},${gr},${b},0)`);
-      ctx.fillStyle = g;
-      ctx.beginPath();
-      ctx.arc(cx, cy, radius, 0, Math.PI*2);
-      ctx.fill();
+// BACKDROP
+(function(){
+  const canvas=document.getElementById('bg-canvas');
+  const ctx=canvas.getContext('2d');
+  let W,H,t=0;
+  const orbs=[{x:0.15,y:0.2,r:0.45,color:[28,120,80],speed:0.0004},{x:0.8,y:0.5,r:0.35,color:[20,90,55],speed:0.0003},{x:0.5,y:0.85,r:0.3,color:[10,60,40],speed:0.0005}];
+  function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
+  function draw(){
+    t++;ctx.clearRect(0,0,W,H);ctx.fillStyle='#060e08';ctx.fillRect(0,0,W,H);
+    orbs.forEach((o,i)=>{
+      const dx=Math.sin(t*o.speed+i*2.1)*0.08,dy=Math.cos(t*o.speed*0.7+i*1.3)*0.06;
+      const cx=(o.x+dx)*W,cy=(o.y+dy)*H,radius=o.r*Math.min(W,H);
+      const g=ctx.createRadialGradient(cx,cy,0,cx,cy,radius);
+      const [r,gr,b]=o.color;
+      g.addColorStop(0,`rgba(${r},${gr},${b},0.55)`);g.addColorStop(0.4,`rgba(${r},${gr},${b},0.18)`);g.addColorStop(1,`rgba(${r},${gr},${b},0)`);
+      ctx.fillStyle=g;ctx.beginPath();ctx.arc(cx,cy,radius,0,Math.PI*2);ctx.fill();
     });
     requestAnimationFrame(draw);
   }
-  window.addEventListener('resize', resize);
-  resize(); draw();
+  window.addEventListener('resize',resize);resize();draw();
 })();
 
-// ── APP LOGIC ──
-const FREE_LIMIT = 3;
-const PRO_TOOLS = ['calendar','ads','products','reviews','faq'];
-let usageKey = 'bb_usage_' + new Date().toDateString();
-let usageCount = parseInt(localStorage.getItem(usageKey) || '0');
-let isPro = localStorage.getItem('bb_pro') === 'true';
-let bizInfo = JSON.parse(localStorage.getItem('bb_biz') || 'null');
+// APP STATE
+const FREE_LIMIT=3;
+const PRO_TOOLS=['calendar','ads','products','reviews','faq'];
+let usageKey='bb_usage_'+new Date().toDateString();
+let usageCount=parseInt(localStorage.getItem(usageKey)||'0');
+let isPro=false;
+let currentUser=null;
+let authToken=localStorage.getItem('bb_token')||null;
+let authMode='login';
+let bizInfo=JSON.parse(localStorage.getItem('bb_biz')||'null');
 
-function init() {
-  const params = new URLSearchParams(window.location.search);
-  if (params.get('pro') === 'success') {
-    isPro = true; localStorage.setItem('bb_pro','true');
-    history.replaceState({},'','/');
-    showSuccess('You are now a Pro member! All tools are unlocked.');
-  }
-  if (params.get('pro') === 'cancelled') history.replaceState({},'','/');
-  updateUI(); renderBizBar();
-  if (!bizInfo) openSetup();
+async function init(){
+  const params=new URLSearchParams(window.location.search);
+  if(params.get('pro')==='success'){history.replaceState({},'/','/');showSuccess('Payment successful! Your Pro account is being activated — please log in to confirm.');}
+  if(params.get('pro')==='cancelled') history.replaceState({},'/','/');
+  if(authToken) await loadUser();
+  renderNav();updateUI();renderBizBar();
 }
 
-function updateUI() {
-  const pill = document.getElementById('nav-pill');
-  pill.textContent = isPro ? 'Pro ✦' : 'Free plan';
-  pill.className = isPro ? 'nav-pill pro' : 'nav-pill';
-  PRO_TOOLS.forEach(t => {
-    const gate = document.getElementById('gate-'+t);
-    const form = document.getElementById(t+'-form');
-    if (gate && form) {
-      gate.classList.toggle('visible', !isPro);
-      form.style.opacity = isPro ? '1' : '0.35';
-      form.style.pointerEvents = isPro ? 'auto' : 'none';
-    }
+async function loadUser(){
+  try{
+    const r=await fetch('/api/me',{headers:{'Authorization':'Bearer '+authToken}});
+    if(!r.ok){authToken=null;localStorage.removeItem('bb_token');return;}
+    const data=await r.json();
+    currentUser=data.email;isPro=data.isPro;
+  }catch(e){authToken=null;localStorage.removeItem('bb_token');}
+}
+
+function renderNav(){
+  const el=document.getElementById('nav-right');
+  if(currentUser){
+    el.innerHTML=`
+      <span class="nav-user">${currentUser}</span>
+      <span class="nav-pill ${isPro?'pro':''}">${isPro?'Pro ✦':'Free plan'}</span>
+      <button class="nav-btn" onclick="logout()">Sign out</button>
+    `;
+  } else {
+    el.innerHTML=`
+      <button class="nav-btn" onclick="openAuth('login')">Sign in</button>
+      <button class="nav-btn primary" onclick="openAuth('signup')">Sign up free</button>
+    `;
+  }
+}
+
+function updateUI(){
+  PRO_TOOLS.forEach(t=>{
+    const gate=document.getElementById('gate-'+t);
+    const form=document.getElementById(t+'-form');
+    if(gate&&form){gate.classList.toggle('visible',!isPro);form.style.opacity=isPro?'1':'0.35';form.style.pointerEvents=isPro?'auto':'none';}
   });
-  if (!isPro && usageCount >= FREE_LIMIT) document.getElementById('upgrade-banner').classList.add('visible');
+  if(!isPro&&usageCount>=FREE_LIMIT) document.getElementById('upgrade-banner').classList.add('visible');
 }
 
-function renderBizBar() {
-  const el = document.getElementById('biz-bar-content');
-  if (!bizInfo || !bizInfo.name) {
-    el.innerHTML = '<div class="biz-bar-empty">No business info yet. <button style="color:var(--green);background:none;border:none;cursor:pointer;font-size:13px;font-family:inherit;" onclick="openSetup()">Add now →</button></div>';
-    return;
-  }
-  const parts = [
-    bizInfo.name && `<span class="biz-bar-item"><strong>${bizInfo.name}</strong></span>`,
-    bizInfo.type && `<span class="biz-bar-item">${bizInfo.type}</span>`,
-    bizInfo.location && `<span class="biz-bar-item">${bizInfo.location}</span>`,
-    bizInfo.customer && `<span class="biz-bar-item">For: ${bizInfo.customer}</span>`,
-  ].filter(Boolean).join('');
-  el.innerHTML = `<div class="biz-bar-grid">${parts}</div>`;
+function renderBizBar(){
+  const el=document.getElementById('biz-bar-content');
+  if(!bizInfo||!bizInfo.name){el.innerHTML='<div class="biz-bar-empty">No business info yet. <button style="color:var(--green);background:none;border:none;cursor:pointer;font-size:13px;font-family:inherit;" onclick="openBizModal()">Add now →</button></div>';return;}
+  const parts=[bizInfo.name&&`<span class="biz-bar-item"><strong>${bizInfo.name}</strong></span>`,bizInfo.type&&`<span class="biz-bar-item">${bizInfo.type}</span>`,bizInfo.location&&`<span class="biz-bar-item">${bizInfo.location}</span>`,bizInfo.customer&&`<span class="biz-bar-item">For: ${bizInfo.customer}</span>`].filter(Boolean).join('');
+  el.innerHTML=`<div class="biz-bar-grid">${parts}</div>`;
 }
 
-function openSetup() {
-  if (bizInfo) {
-    document.getElementById('setup-name').value = bizInfo.name || '';
-    document.getElementById('setup-type').value = bizInfo.type || '';
-    document.getElementById('setup-location').value = bizInfo.location || '';
-    document.getElementById('setup-customer').value = bizInfo.customer || '';
-    document.getElementById('setup-desc').value = bizInfo.desc || '';
-  }
-  document.getElementById('setup-modal').classList.add('visible');
+// AUTH
+function openAuth(mode){
+  authMode=mode;
+  const isLogin=mode==='login';
+  document.getElementById('auth-title').textContent=isLogin?'Sign in to BizBoost':'Create your account';
+  document.getElementById('auth-desc').textContent=isLogin?'Access your account from any device.':'Free forever. Upgrade anytime for Pro tools.';
+  document.getElementById('auth-submit').textContent=isLogin?'Sign in':'Create account';
+  document.getElementById('auth-switch').innerHTML=isLogin?'Don\'t have an account? <a onclick="toggleAuthMode()">Sign up free</a>':'Already have an account? <a onclick="toggleAuthMode()">Sign in</a>';
+  document.getElementById('auth-error').style.display='none';
+  document.getElementById('auth-modal').classList.add('visible');
+}
+function closeAuthModal(){ document.getElementById('auth-modal').classList.remove('visible'); }
+function toggleAuthMode(){ openAuth(authMode==='login'?'signup':'login'); }
+
+async function submitAuth(){
+  const email=document.getElementById('auth-email').value.trim();
+  const password=document.getElementById('auth-password').value;
+  const errEl=document.getElementById('auth-error');
+  const btn=document.getElementById('auth-submit');
+  errEl.style.display='none';
+  if(!email||!password){errEl.textContent='Please enter your email and password.';errEl.style.display='block';return;}
+  btn.disabled=true;btn.textContent=authMode==='login'?'Signing in…':'Creating account…';
+  try{
+    const r=await fetch(`/api/${authMode}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password})});
+    const data=await r.json();
+    if(!r.ok){errEl.textContent=data.error||'Something went wrong.';errEl.style.display='block';btn.disabled=false;btn.textContent=authMode==='login'?'Sign in':'Create account';return;}
+    if(authMode==='signup'&&!data.session){
+      errEl.style.display='none';
+      closeAuthModal();
+      showSuccess('Account created! Please check your email to confirm your address, then sign in.');
+      btn.disabled=false;btn.textContent='Create account';return;
+    }
+    authToken=data.session?.access_token||data.access_token;
+    localStorage.setItem('bb_token',authToken);
+    await loadUser();
+    renderNav();updateUI();closeAuthModal();
+    showSuccess(`Welcome${authMode==='signup'?' to BizBoost':' back'}!`);
+  }catch(e){errEl.textContent='Network error. Please try again.';errEl.style.display='block';}
+  btn.disabled=false;btn.textContent=authMode==='login'?'Sign in':'Create account';
 }
 
-function saveBizInfo() {
-  const name = document.getElementById('setup-name').value.trim();
-  const type = document.getElementById('setup-type').value.trim();
-  if (!name || !type) { alert('Please enter your business name and type.'); return; }
-  bizInfo = { name, type, location: document.getElementById('setup-location').value.trim(), customer: document.getElementById('setup-customer').value.trim(), desc: document.getElementById('setup-desc').value.trim() };
-  localStorage.setItem('bb_biz', JSON.stringify(bizInfo));
-  document.getElementById('setup-modal').classList.remove('visible');
+function logout(){
+  authToken=null;currentUser=null;isPro=false;
+  localStorage.removeItem('bb_token');
+  renderNav();updateUI();
+  showSuccess('Signed out successfully.');
+}
+
+// BIZ INFO
+function openBizModal(){
+  if(bizInfo){document.getElementById('setup-name').value=bizInfo.name||'';document.getElementById('setup-type').value=bizInfo.type||'';document.getElementById('setup-location').value=bizInfo.location||'';document.getElementById('setup-customer').value=bizInfo.customer||'';document.getElementById('setup-desc').value=bizInfo.desc||'';}
+  document.getElementById('biz-modal').classList.add('visible');
+}
+function saveBizInfo(){
+  const name=document.getElementById('setup-name').value.trim();
+  const type=document.getElementById('setup-type').value.trim();
+  if(!name||!type){alert('Please enter your business name and type.');return;}
+  bizInfo={name,type,location:document.getElementById('setup-location').value.trim(),customer:document.getElementById('setup-customer').value.trim(),desc:document.getElementById('setup-desc').value.trim()};
+  localStorage.setItem('bb_biz',JSON.stringify(bizInfo));
+  document.getElementById('biz-modal').classList.remove('visible');
   renderBizBar();
 }
 
-function switchTool(tool) {
-  document.querySelectorAll('.panel').forEach(p => p.style.display='none');
-  document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+function switchTool(tool){
+  document.querySelectorAll('.panel').forEach(p=>p.style.display='none');
+  document.querySelectorAll('.tool-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('panel-'+tool).style.display='block';
   document.getElementById('btn-'+tool).classList.add('active');
-  showError(''); showSuccess('');
+  showError('');showSuccess('');
 }
 
-function showError(msg) { const el=document.getElementById('error-msg'); el.textContent=msg; el.style.display=msg?'block':'none'; document.getElementById('success-msg').style.display='none'; }
-function showSuccess(msg) { const el=document.getElementById('success-msg'); el.textContent=msg; el.style.display=msg?'block':'none'; document.getElementById('error-msg').style.display='none'; }
+function showError(msg){const el=document.getElementById('error-msg');el.textContent=msg;el.style.display=msg?'block':'none';document.getElementById('success-msg').style.display='none';}
+function showSuccess(msg){const el=document.getElementById('success-msg');el.textContent=msg;el.style.display=msg?'block':'none';document.getElementById('error-msg').style.display='none';}
 
-function copyOut(id) {
-  navigator.clipboard.writeText(document.getElementById(id).textContent).then(() => {
-    const btn = document.querySelector(`[onclick="copyOut('${id}')"]`);
-    btn.textContent='Copied!'; setTimeout(()=>btn.textContent='Copy',1500);
+function copyOut(id){
+  navigator.clipboard.writeText(document.getElementById(id).textContent).then(()=>{
+    const btn=document.querySelector(`[onclick="copyOut('${id}')"]`);
+    btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy',1500);
   });
 }
 
-async function startCheckout() {
+async function startCheckout(){
+  if(!currentUser){openAuth('signup');return;}
   document.querySelectorAll('.upgrade-btn,.upgrade-banner-btn').forEach(b=>{b.disabled=true;b.textContent='Loading…';});
-  try {
-    const res = await fetch('/api/checkout',{method:'POST',headers:{'Content-Type':'application/json'}});
-    const data = await res.json();
-    if (data.url) window.location.href=data.url;
+  try{
+    const r=await fetch('/api/checkout',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+(authToken||'')}});
+    const data=await r.json();
+    if(data.url) window.location.href=data.url;
     else throw new Error();
-  } catch(e) {
+  }catch(e){
     showError('Could not start checkout. Please try again.');
     document.querySelectorAll('.upgrade-btn,.upgrade-banner-btn').forEach(b=>{b.disabled=false;b.textContent='Upgrade — $4.99/mo';});
   }
 }
 
-async function callAPI(prompt) {
-  const res = await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt})});
-  if (!res.ok) throw new Error('Request failed: '+res.status);
-  const data = await res.json();
-  if (data.error) throw new Error(JSON.stringify(data.error));
+async function callAPI(prompt){
+  const headers={'Content-Type':'application/json'};
+  if(authToken) headers['Authorization']='Bearer '+authToken;
+  const r=await fetch('/api/generate',{method:'POST',headers,body:JSON.stringify({prompt})});
+  if(!r.ok) throw new Error('Request failed: '+r.status);
+  const data=await r.json();
+  if(data.error) throw new Error(JSON.stringify(data.error));
   return data.text;
 }
 
-function getBiz() {
-  if (!bizInfo) return '';
+function getBiz(){
+  if(!bizInfo) return '';
   return ['Business name: '+bizInfo.name,'Type: '+bizInfo.type,bizInfo.location?'Location: '+bizInfo.location:'',bizInfo.customer?'Target customer: '+bizInfo.customer:'',bizInfo.desc?'What makes them special: '+bizInfo.desc:''].filter(Boolean).join('\n');
 }
 
-function setLoading(tool) {
-  const out=document.getElementById('out-'+tool);
-  out.classList.add('visible');
-  document.getElementById(tool+'-text').innerHTML='<span class="loading-text">Generating</span>';
-}
+function setLoading(tool){document.getElementById('out-'+tool).classList.add('visible');document.getElementById(tool+'-text').innerHTML='<span class="loading-text">Generating</span>';}
 
-async function generate(tool) {
+async function generate(tool){
   showError('');
-  if (!bizInfo||!bizInfo.name) { openSetup(); return; }
-  if (PRO_TOOLS.includes(tool)&&!isPro) { showError('This is a Pro feature. Upgrade to unlock it.'); return; }
-  if (!isPro&&usageCount>=FREE_LIMIT) { document.getElementById('upgrade-banner').classList.add('visible'); showError('You have used all 3 free generations today.'); return; }
+  if(!bizInfo||!bizInfo.name){openBizModal();return;}
+  if(PRO_TOOLS.includes(tool)&&!isPro){
+    if(!currentUser) openAuth('signup');
+    else showError('This is a Pro feature. Upgrade to unlock it.');
+    return;
+  }
+  if(!isPro&&usageCount>=FREE_LIMIT){document.getElementById('upgrade-banner').classList.add('visible');showError('You have used all 3 free generations today.');return;}
   const biz=getBiz();
   const btn=document.getElementById('gen-'+tool);
   const origText=btn.textContent;
-  btn.disabled=true; btn.textContent='Generating…';
+  btn.disabled=true;btn.textContent='Generating…';
   setLoading(tool);
   const prompts={
-    listings:()=>`Write a compelling ${document.getElementById('listing-platform').value} business listing description. Tone: ${document.getElementById('listing-tone').value}. Under 250 words. Natural keywords, highlight benefits, end with CTA. Text only.\n\n${biz}`,
-    social:()=>`Write ${document.getElementById('social-count').value} distinct ${document.getElementById('social-platform').value} captions.${document.getElementById('social-theme').value?' Theme: '+document.getElementById('social-theme').value+'.':''} Different angles. 3-5 hashtags each. Number each caption.\n\n${biz}`,
-    email:()=>`Write a ${document.getElementById('email-tone').value.toLowerCase()} promotional email. Goal: ${document.getElementById('email-goal').value}.${document.getElementById('email-offer').value?' Offer: '+document.getElementById('email-offer').value+'.':''}\n\nFormat:\nSubject: [subject]\n\n[body with greeting, 2-3 sentences, CTA, sign-off]\n\n${biz}`,
-    calendar:()=>`Create a 7-day ${document.getElementById('cal-platform').value} social media content calendar. Theme: ${document.getElementById('cal-theme').value}.${document.getElementById('cal-events').value?' Upcoming: '+document.getElementById('cal-events').value+'.':''}\n\nFormat:\nMon: [caption + 3 hashtags]\nTue: ...\n(through Sun)\n\nMake each day distinct.\n\n${biz}`,
+    listings:()=>`Write a compelling ${document.getElementById('listing-platform').value} business listing. Tone: ${document.getElementById('listing-tone').value}. Under 250 words, natural keywords, end with CTA. Text only.\n\n${biz}`,
+    social:()=>`Write ${document.getElementById('social-count').value} distinct ${document.getElementById('social-platform').value} captions.${document.getElementById('social-theme').value?' Theme: '+document.getElementById('social-theme').value+'.':''} Different angles. 3-5 hashtags each. Number each.\n\n${biz}`,
+    email:()=>`Write a ${document.getElementById('email-tone').value} promotional email. Goal: ${document.getElementById('email-goal').value}.${document.getElementById('email-offer').value?' Offer: '+document.getElementById('email-offer').value+'.':''}\n\nFormat:\nSubject: [subject]\n\n[body: greeting, 2-3 sentences, CTA, sign-off]\n\n${biz}`,
+    calendar:()=>`Create a 7-day ${document.getElementById('cal-platform').value} social media calendar. Theme: ${document.getElementById('cal-theme').value}.${document.getElementById('cal-events').value?' Upcoming: '+document.getElementById('cal-events').value+'.':''}\nFormat:\nMon: [caption + 3 hashtags]\n...through Sun. Each day distinct.\n\n${biz}`,
     ads:()=>`Write high-converting ${document.getElementById('ad-platform').value} ad copy. Goal: ${document.getElementById('ad-goal').value}. Positioning: ${document.getElementById('ad-budget').value}.${document.getElementById('ad-offer').value?' Offer: '+document.getElementById('ad-offer').value+'.':''}\nFor Google: 3 headlines (max 30 chars) + 2 descriptions (max 90 chars).\nFor Facebook/Instagram: Primary text + headline + description.\n\n${biz}`,
-    products:()=>{const n=document.getElementById('product-name').value; if(!n){showError('Please enter a product name.');return null;} return `Write ${document.getElementById('product-count').value} enticing product description(s) for: ${n}.${document.getElementById('product-details').value?' Details: '+document.getElementById('product-details').value+'.':''}${document.getElementById('product-price').value?' Price: '+document.getElementById('product-price').value+'.':''} Vivid, 2-4 sentences each.\n\n${biz}`;},
-    reviews:()=>{const r=document.getElementById('review-text').value; if(!r){showError('Please paste the customer review.');return null;} return `Write a ${document.getElementById('review-tone').value.toLowerCase()} response to this ${document.getElementById('review-rating').value} review. 3-5 sentences. Genuine, address their points, invite them back.\n\nReview: "${r}"\n\n${biz}`;},
-    faq:()=>`Generate ${document.getElementById('faq-count').value} SEO-optimized FAQs. Focus: ${document.getElementById('faq-focus').value}.${document.getElementById('faq-custom').value?' Include: '+document.getElementById('faq-custom').value+'.':''}\n\nFormat:\nQ: [question]\nA: [2-3 sentence answer with natural keywords]\n\n${biz}`
+    products:()=>{const n=document.getElementById('product-name').value;if(!n){showError('Please enter a product name.');return null;}return `Write ${document.getElementById('product-count').value} enticing product description(s) for: ${n}.${document.getElementById('product-details').value?' Details: '+document.getElementById('product-details').value+'.':''}${document.getElementById('product-price').value?' Price: '+document.getElementById('product-price').value+'.':''} Vivid, 2-4 sentences each.\n\n${biz}`;},
+    reviews:()=>{const r=document.getElementById('review-text').value;if(!r){showError('Please paste the review.');return null;}return `Write a ${document.getElementById('review-tone').value} response to this ${document.getElementById('review-rating').value} review. 3-5 sentences, genuine, address their points, invite them back.\n\nReview: "${r}"\n\n${biz}`;},
+    faq:()=>`Generate ${document.getElementById('faq-count').value} SEO-optimized FAQs. Focus: ${document.getElementById('faq-focus').value}.${document.getElementById('faq-custom').value?' Include: '+document.getElementById('faq-custom').value+'.':''}\nFormat:\nQ: [question]\nA: [2-3 sentence answer]\n\n${biz}`
   };
-  const promptFn=prompts[tool];
-  const prompt=promptFn();
+  const prompt=prompts[tool]();
   if(!prompt){btn.disabled=false;btn.textContent=origText;return;}
-  try { document.getElementById(tool+'-text').textContent=await callAPI(prompt); }
-  catch(e) { document.getElementById(tool+'-text').textContent='Something went wrong. Please try again.'; }
+  try{document.getElementById(tool+'-text').textContent=await callAPI(prompt);}
+  catch(e){document.getElementById(tool+'-text').textContent='Something went wrong. Please try again.';}
   if(!isPro){usageCount++;localStorage.setItem(usageKey,usageCount);if(usageCount>=FREE_LIMIT)document.getElementById('upgrade-banner').classList.add('visible');}
-  btn.disabled=false; btn.textContent=origText;
+  btn.disabled=false;btn.textContent=origText;
 }
 
 init();
