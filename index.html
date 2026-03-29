@@ -18,7 +18,8 @@
     nav { background: var(--white); border-bottom: 1px solid var(--border); padding: 0 2rem; height: 60px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
     .nav-logo { font-family: 'Lora', serif; font-size: 20px; font-weight: 600; color: var(--ink); text-decoration: none; }
     .nav-logo span { color: var(--green); }
-    .nav-badge { font-size: 11px; background: var(--green-light); color: var(--green-dark); padding: 4px 10px; border-radius: 20px; font-weight: 500; }
+    .nav-pill { font-size: 11px; background: var(--green-light); color: var(--green-dark); padding: 4px 10px; border-radius: 20px; font-weight: 500; }
+    .nav-pill.pro { background: #fef9c3; color: #854d0e; }
     .hero { text-align: center; padding: 5rem 1.5rem 3rem; max-width: 640px; margin: 0 auto; animation: fadeUp 0.6s ease both; }
     .hero-tag { display: inline-block; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--green); font-weight: 500; margin-bottom: 1rem; }
     .hero h1 { font-family: 'Lora', serif; font-size: clamp(2rem, 5vw, 3rem); font-weight: 600; line-height: 1.2; color: var(--ink); margin-bottom: 1rem; }
@@ -47,6 +48,7 @@
     .gen-btn:active { transform: scale(0.99); }
     .gen-btn:disabled { opacity: 0.5; cursor: not-allowed; }
     .error-msg { background: #fef2f2; color: #991b1b; font-size: 13px; padding: 10px 14px; border-radius: var(--radius-sm); margin-bottom: 1rem; display: none; border: 1px solid #fecaca; }
+    .success-msg { background: var(--green-light); color: var(--green-dark); font-size: 13px; padding: 10px 14px; border-radius: var(--radius-sm); margin-bottom: 1rem; display: none; border: 1px solid #a7d9c8; }
     .output-section { display: none; animation: fadeUp 0.4s ease both; }
     .output-section.visible { display: block; }
     .output-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1rem; }
@@ -62,8 +64,9 @@
     .upgrade-banner.visible { display: flex; }
     .upgrade-text { font-size: 14px; color: var(--green-dark); }
     .upgrade-text strong { font-weight: 500; }
-    .upgrade-btn { font-size: 13px; background: var(--green); color: var(--white); border: none; border-radius: 6px; padding: 8px 18px; cursor: pointer; font-family: 'DM Sans', sans-serif; font-weight: 500; white-space: nowrap; transition: background 0.15s; }
+    .upgrade-btn { font-size: 13px; background: var(--green); color: var(--white); border: none; border-radius: 6px; padding: 10px 20px; cursor: pointer; font-family: 'DM Sans', sans-serif; font-weight: 500; white-space: nowrap; transition: background 0.15s; }
     .upgrade-btn:hover { background: var(--green-dark); }
+    .upgrade-btn:disabled { opacity: 0.6; cursor: not-allowed; }
     footer { text-align: center; padding: 2rem; font-size: 12px; color: var(--ink-light); border-top: 1px solid var(--border); margin-top: 2rem; }
     @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
   </style>
@@ -71,8 +74,9 @@
 <body>
   <nav>
     <a class="nav-logo" href="#">Biz<span>Boost</span> AI</a>
-    <span class="nav-badge">Free to start</span>
+    <span class="nav-pill" id="nav-pill">Free plan</span>
   </nav>
+
   <section class="hero">
     <span class="hero-tag">Powered by AI</span>
     <h1>Marketing copy for your business, <em>instantly</em></h1>
@@ -83,6 +87,7 @@
       <div><strong>3 formats</strong> at once</div>
     </div>
   </section>
+
   <div class="container">
     <div class="form-card">
       <div class="section-label">Your business</div>
@@ -96,6 +101,7 @@
         <div class="field"><label>Target customer</label><input type="text" id="biz-customer" placeholder="e.g. Young professionals" /></div>
       </div>
     </div>
+
     <div class="form-card">
       <div class="section-label">What to generate</div>
       <div class="tabs">
@@ -105,8 +111,11 @@
         <button class="tab" id="tab-email" onclick="setMode('email')">Promo email</button>
       </div>
     </div>
+
     <div class="error-msg" id="error-msg"></div>
+    <div class="success-msg" id="success-msg"></div>
     <button class="gen-btn" id="gen-btn" onclick="generate()">Generate marketing copy</button>
+
     <div class="output-section" id="output-section">
       <div class="output-card" id="card-listing" style="display:none;">
         <div class="output-header"><span class="output-label">📍 Google business listing</span><button class="copy-btn" onclick="copyOut('listing')">Copy</button></div>
@@ -121,37 +130,96 @@
         <div class="output-text" id="text-email"></div>
       </div>
     </div>
+
     <div class="upgrade-banner" id="upgrade-banner">
-      <div class="upgrade-text"><strong>You've used your 3 free generations today.</strong> Upgrade to Pro for unlimited access.</div>
-      <button class="upgrade-btn">Upgrade — $12/mo</button>
+      <div class="upgrade-text"><strong>You've used your 3 free generations today.</strong><br>Upgrade to Pro for unlimited generations — just $4.99/month.</div>
+      <button class="upgrade-btn" id="upgrade-btn" onclick="startCheckout()">Upgrade to Pro — $4.99/mo</button>
     </div>
   </div>
+
   <footer>© 2026 BizBoost AI · Built for small business owners · Powered by Claude</footer>
+
   <script>
     const FREE_LIMIT = 3;
     let mode = 'all';
     let usageKey = 'bb_usage_' + new Date().toDateString();
     let usageCount = parseInt(localStorage.getItem(usageKey) || '0');
+    let isPro = localStorage.getItem('bb_pro') === 'true';
+
+    function init() {
+      // Check if returning from successful Stripe checkout
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('pro') === 'success') {
+        isPro = true;
+        localStorage.setItem('bb_pro', 'true');
+        history.replaceState({}, '', '/');
+        showSuccess('You are now a Pro member! Enjoy unlimited generations.');
+      }
+      if (params.get('pro') === 'cancelled') {
+        history.replaceState({}, '', '/');
+      }
+      updateUI();
+    }
+
+    function updateUI() {
+      const pill = document.getElementById('nav-pill');
+      if (isPro) {
+        pill.textContent = 'Pro ✦';
+        pill.classList.add('pro');
+      } else {
+        pill.textContent = 'Free plan';
+        pill.classList.remove('pro');
+      }
+      if (!isPro && usageCount >= FREE_LIMIT) {
+        document.getElementById('upgrade-banner').classList.add('visible');
+      }
+    }
 
     function setMode(m) {
       mode = m;
       ['all','listing','social','email'].forEach(k => document.getElementById('tab-'+k).classList.toggle('active', k===m));
     }
+
     function showError(msg) {
       const el = document.getElementById('error-msg');
       el.textContent = msg; el.style.display = msg ? 'block' : 'none';
+      document.getElementById('success-msg').style.display = 'none';
     }
+
+    function showSuccess(msg) {
+      const el = document.getElementById('success-msg');
+      el.textContent = msg; el.style.display = msg ? 'block' : 'none';
+      document.getElementById('error-msg').style.display = 'none';
+    }
+
     function showCard(id, loading) {
       document.getElementById('card-'+id).style.display = 'block';
       if (loading) document.getElementById('text-'+id).innerHTML = '<span class="loading-text">Generating</span>';
     }
+
     function setOutput(id, text) { document.getElementById('text-'+id).textContent = text; }
+
     function copyOut(id) {
       navigator.clipboard.writeText(document.getElementById('text-'+id).textContent).then(() => {
         const btn = document.querySelector('[onclick="copyOut(\''+id+'\')"]');
         btn.textContent = 'Copied!'; setTimeout(() => btn.textContent = 'Copy', 1500);
       });
     }
+
+    async function startCheckout() {
+      const btn = document.getElementById('upgrade-btn');
+      btn.disabled = true; btn.textContent = 'Loading…';
+      try {
+        const res = await fetch('/api/checkout', { method: 'POST', headers: {'Content-Type':'application/json'} });
+        const data = await res.json();
+        if (data.url) { window.location.href = data.url; }
+        else { throw new Error('No checkout URL returned'); }
+      } catch (e) {
+        showError('Could not start checkout. Please try again.');
+        btn.disabled = false; btn.textContent = 'Upgrade to Pro — $4.99/mo';
+      }
+    }
+
     async function callAPI(prompt) {
       const res = await fetch('/api/generate', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({prompt}) });
       if (!res.ok) throw new Error('Request failed: ' + res.status);
@@ -159,6 +227,7 @@
       if (data.error) throw new Error(JSON.stringify(data.error));
       return data.text;
     }
+
     async function generate() {
       showError('');
       const name = document.getElementById('biz-name').value.trim();
@@ -166,32 +235,44 @@
       const desc = document.getElementById('biz-desc').value.trim();
       const loc  = document.getElementById('biz-location').value.trim();
       const cust = document.getElementById('biz-customer').value.trim();
+
       if (!name || !type) { showError('Please enter your business name and type.'); return; }
-      if (usageCount >= FREE_LIMIT) {
+
+      if (!isPro && usageCount >= FREE_LIMIT) {
         document.getElementById('upgrade-banner').classList.add('visible');
         showError('You have used all 3 free generations today. Upgrade to Pro for unlimited access.');
         return;
       }
+
       const btn = document.getElementById('gen-btn');
       btn.disabled = true; btn.textContent = 'Generating…';
       document.getElementById('output-section').classList.add('visible');
       ['listing','social','email'].forEach(id => { document.getElementById('card-'+id).style.display='none'; document.getElementById('text-'+id).textContent=''; });
+
       const info = ['Business name: '+name,'Type: '+type,loc?'Location: '+loc:'',cust?'Target customer: '+cust:'',desc?'What makes them special: '+desc:''].filter(Boolean).join('\n');
       const prompts = {
         listing: `Write a compelling Google Business listing description for this business. Under 250 words. Highlight key benefits, include keywords naturally, end with a call to action. Output the listing text only.\n\n${info}`,
         social:  `Write 3 distinct social media captions for this business. Each 1-3 sentences with a different angle (promotional, community, behind-the-scenes). Include 3-5 hashtags each.\n\nFormat:\nCaption 1:\n[text]\n\nCaption 2:\n[text]\n\nCaption 3:\n[text]\n\n${info}`,
-        email:   `Write a short promotional email for this business.\n\nFormat:\nSubject: [subject line]\n\n[email body: greeting, 2-3 sentences about offerings, a discount or CTA, sign-off]\n\n${info}`
+        email:   `Write a short promotional email.\n\nFormat:\nSubject: [subject line]\n\n[email body: greeting, 2-3 sentences about offerings, a discount or CTA, sign-off]\n\n${info}`
       };
+
       const toGenerate = mode === 'all' ? ['listing','social','email'] : [mode];
       for (const key of toGenerate) {
         showCard(key, true);
         try { setOutput(key, await callAPI(prompts[key])); }
         catch (e) { setOutput(key, 'Something went wrong. Please try again.'); }
       }
-      usageCount++; localStorage.setItem(usageKey, usageCount);
-      if (usageCount >= FREE_LIMIT) document.getElementById('upgrade-banner').classList.add('visible');
+
+      if (!isPro) {
+        usageCount++;
+        localStorage.setItem(usageKey, usageCount);
+        if (usageCount >= FREE_LIMIT) document.getElementById('upgrade-banner').classList.add('visible');
+      }
+
       btn.disabled = false; btn.textContent = 'Generate marketing copy';
     }
+
+    init();
   </script>
 </body>
 </html>
